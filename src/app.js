@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
+const groupsRouter = require('./groups/groups-router')
 
 const app = express()
 
@@ -18,6 +19,8 @@ app.use(
       origin: CLIENT_ORIGIN
   })
 );
+
+app.use('/api/groups', groupsRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello, world!')
