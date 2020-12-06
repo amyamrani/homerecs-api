@@ -8,6 +8,7 @@ const errorHandler = require('./errorHandler')
 const validateBearerToken = require('./validateBearerToken')
 const usersRouter = require('./users/users-router')
 const groupsRouter = require('./groups/groups-router')
+const productsRouter = require('./products/products-router')
 
 const app = express()
 
@@ -28,6 +29,7 @@ app.use('/api/users', usersRouter)
 app.use(validateBearerToken)
 
 app.use('/api/groups', groupsRouter)
+app.use('/api/products', productsRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello, world!')
