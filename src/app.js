@@ -4,6 +4,9 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
+const errorHandler = require('./errorHandler')
+const validateBearerToken = require('./validateBearerToken')
+const usersRouter = require('./users/users-router')
 const groupsRouter = require('./groups/groups-router')
 
 const app = express()
@@ -20,21 +23,16 @@ app.use(
   })
 );
 
+app.use('/api/users', usersRouter)
+
+app.use(validateBearerToken)
+
 app.use('/api/groups', groupsRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello, world!')
 })
 
-app.use(function errorHandler(error, req, res, next) {
-  let response
-  if (NODE_ENV === 'production') {
-    response = { error: { message: 'server error' } }
-  } else {
-    console.error(error)
-    response = { message: error.message, error }
-  }
-  res.status(500).json(response)
- })
+app.use(errorHandler)
 
 module.exports = app
