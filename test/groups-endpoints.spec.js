@@ -79,39 +79,6 @@ describe('Groups Endpoints', function() {
     })
   })
 
-  describe('DELETE /api/groups/:group_id', () => {
-    context('Given no groups', () => {
-      it('responds with 404', () => {
-        const groupId = 123456
-        return supertest(app)
-          .delete(`/api/groups/${groupId}`)
-          .set('Authorization', `Bearer ${testUsers[0].token}`)
-          .expect(404, { error: { message: `Group doesn't exist` } })
-      })
-    })
-
-    context('Given there are groups in the database', () => {
-      const testUsers = makeUsersArray()
-      const testGroups = makeGroupsArray()
-
-      it('responds with 204 and removes the group', () => {
-        seedGroups(db, testGroups)
-        const idToRemove = testGroups[0].id
-        const expectedGroups = testGroups.filter(group => group.id !== idToRemove)
-        return supertest(app)
-          .delete(`/api/groups/${idToRemove}`)
-          .set('Authorization', `Bearer ${testUsers[0].token}`)
-          .expect(204)
-          .then(res =>
-            supertest(app)
-              .get('/api/groups')
-              .set('Authorization', `Bearer ${testUsers[0].token}`)
-              .expect(expectedGroups)
-          )
-      })
-    })
-  })
-
   describe('PATCH /api/groups/:group_id', () => {
     context('Given no groups', () => {
       it(`responds with 404`, () => {
@@ -189,6 +156,39 @@ describe('Groups Endpoints', function() {
               .get(`/api/groups/${idToUpdate}`)
               .set('Authorization', `Bearer ${testUsers[0].token}`)
               .expect(expectedGroup)
+          )
+      })
+    })
+  })
+
+  describe('DELETE /api/groups/:group_id', () => {
+    context('Given no groups', () => {
+      it('responds with 404', () => {
+        const groupId = 123456
+        return supertest(app)
+          .delete(`/api/groups/${groupId}`)
+          .set('Authorization', `Bearer ${testUsers[0].token}`)
+          .expect(404, { error: { message: `Group doesn't exist` } })
+      })
+    })
+
+    context('Given there are groups in the database', () => {
+      const testUsers = makeUsersArray()
+      const testGroups = makeGroupsArray()
+
+      it('responds with 204 and removes the group', () => {
+        seedGroups(db, testGroups)
+        const idToRemove = testGroups[0].id
+        const expectedGroups = testGroups.filter(group => group.id !== idToRemove)
+        return supertest(app)
+          .delete(`/api/groups/${idToRemove}`)
+          .set('Authorization', `Bearer ${testUsers[0].token}`)
+          .expect(204)
+          .then(res =>
+            supertest(app)
+              .get('/api/groups')
+              .set('Authorization', `Bearer ${testUsers[0].token}`)
+              .expect(expectedGroups)
           )
       })
     })

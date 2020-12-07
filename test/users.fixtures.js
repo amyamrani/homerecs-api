@@ -19,6 +19,15 @@ function makeUsersArray() {
       password: 'secret',
       date_created: '2020-09-02T10:10:30.615Z',
       token: 'RTxYb30o4yHx5ionD4QRVR=='
+    },
+    {
+      id: 3,
+      first_name: 'Alex',
+      last_name: 'Hopkins',
+      email: 'alex@hopkins.com',
+      password: 'secret',
+      date_created: '2020-09-02T10:10:30.615Z',
+      token: 'ZCx42b34o4yHx5ionD4QTRU=='
     }
   ]
 }

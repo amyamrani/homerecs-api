@@ -19,7 +19,7 @@ productsRouter
   .route('/')
 
   .get((req, res, next) => {
-    ProductsService.getAllProductsByUserId(req.app.get('db'), req.query.user_id)
+    ProductsService.getAllProductsByUserId(req.app.get('db'), req.query.user_id || 0)
       .then(products => {
         res.json(products.map(serializeProduct))
       })
