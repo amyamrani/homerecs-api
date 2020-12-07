@@ -1,4 +1,4 @@
-INSERT INTO groups (name, access_code)
+INSERT INTO groups (name, code)
 VALUES
-  ('Group ABC', 'code123'),
-  ('Group XYZ', 'code456');
+  ('Best Buddies', 'code123'),
+  ('Cousin Crew', 'code456');

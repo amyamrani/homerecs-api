@@ -1,30 +1,38 @@
-INSERT INTO users (first_name, last_name, email, password, date_created)
+INSERT INTO users (group_id, first_name, last_name, email, token, password, date_created)
 VALUES
   (
+    '1',
     'User',
     'One',
     'user_one@gmail.com',
-    'Password1',
-    '2020-09-12 21:53:33'
+    'srCbWicX/A7+u35h6miyCw==',
+    '$2b$10$7twI13/Rq5IpXtdrujJZW.R6AtqaGwX.94lLdi/XJjE.6Igj3GqhS',
+    '2020-12-01 21:53:33'
   ),
   (
+    '2',
     'User',
     'Two',
     'user_two@gmail.com',
-    'Password2',
-    '2020-09-13 21:53:33'
+    'JfLaMVcAbHxKM4N1QI5yCQ==',
+    '$2b$10$tSR2WG5NMoGb1CoSw0DWLOv0CcnhuUAUDwuLZEN0fUecZRtlkBy4C',
+    '2020-12-01 21:53:33'
   ),
   (
+    '1',
     'User',
     'Three',
     'user_three@gmail.com',
-    'Password3',
-    '2020-09-14 21:53:33'
+    'FzgKW/2apmIhomEQkxZsmg==',
+    '$2b$10$gVo1e7bNZPMiNPpr5/SOMOZUM3n.VNQqeUiTTCKDckUwWyxiVS7La',
+    '2020-12-01 21:53:33'
   ),
   (
+    '2',
     'User',
     'Four',
     'user_four@gmail.com',
-    'Password4',
-    '2020-09-15 21:53:33'
+    '4u4pecziYfgo/7DJYxkJrg==',
+    '$2b$10$4Opx5jTLS2Qqcq4DuzPKYuWxyNv7WGV0hBcoYrY3ktlBD38Z/dCiq',
+    '2020-12-01 21:53:33'
   );
