@@ -31,10 +31,6 @@ app.use(validateBearerToken)
 app.use('/api/groups', groupsRouter)
 app.use('/api/products', productsRouter)
 
-app.get('/', (req, res) => {
-  res.send('Hello, world!')
-})
-
 app.use(errorHandler)
 
 module.exports = app
