@@ -8,7 +8,7 @@ const jsonParser = express.json()
 const serializeGroup = group => ({
   id: group.id,
   name: group.name,
-  access_code: group.access_code,
+  code: group.code,
 })
 
 groupsRouter
@@ -81,7 +81,7 @@ groupsRouter
     if (numberOfValues === 0) {
       return res.status(400).json({
         error: {
-          message: `Request body must contain 'name' and 'access code'`
+          message: `Request body must contain 'name' and 'code'`
         }
       })
     }
