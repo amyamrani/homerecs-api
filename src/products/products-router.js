@@ -28,7 +28,14 @@ productsRouter
 
   .post(jsonParser, (req, res, next) => {
     const { name, url, comments, category } = req.body
-    const newProduct = { name, url, comments, category }
+    const newProduct = {
+      name,
+      url,
+      comments,
+      category,
+      user_id: req.user.id,
+      date_created: new Date(),
+    }
 
     for (const [key, value] of Object.entries(newProduct)) {
       if (value == null) {
