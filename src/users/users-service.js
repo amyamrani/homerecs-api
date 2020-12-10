@@ -11,11 +11,12 @@ const UsersService = {
   getByToken(knex, token) {
     return knex.from('users').select('*').where('token', token || '').first()
   },
-
   hashPassword(password) {
     return bcrypt.hash(password, 10)
   },
-
+  getUsersByGroupId(knex, group_id) {
+    return knex.from('users').select('*').where('group_id', group_id)
+  },
   createUser(knex, user) {
     return knex
       .insert(user)
@@ -25,7 +26,6 @@ const UsersService = {
         return rows[0]
       })
   },
-
   createToken() {
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, data) => {
@@ -33,7 +33,14 @@ const UsersService = {
       })
     })
   },
-
+  updateUserGroupId(knex, id, group_id) {
+    return knex('users')
+      .where({ id })
+      .update({ group_id })
+      .then(rows => {
+        return rows[0]
+      })
+  },
   checkPassword(reqPassword, foundUser) {
     return new Promise((resolve, reject) =>
       bcrypt.compare(reqPassword, foundUser.password, (err, response) => {

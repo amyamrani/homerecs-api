@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const UsersService = require('../users/users-service')
 const GroupsService = require('./groups-service')
 
 const groupsRouter = express.Router()
@@ -10,6 +11,16 @@ const serializeGroup = group => ({
   name: group.name,
   code: group.code,
 })
+
+const generateCode = (length) => {
+  let result = ''
+  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let charactersLength = characters.length
+  for ( let i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
 
 groupsRouter
   .route('/')
@@ -23,8 +34,8 @@ groupsRouter
   })
 
   .post(jsonParser, (req, res, next) => {
-    const { name, access_code } = req.body
-    const newGroup = { name, access_code }
+    const { name } = req.body
+    const newGroup = { name, code: generateCode(7) }
 
     for (const [key, value] of Object.entries(newGroup)) {
       if (value == null) {
@@ -36,10 +47,12 @@ groupsRouter
 
     GroupsService.insertGroup(req.app.get('db'), newGroup)
       .then(group => {
-        res
+        UsersService.updateUserGroupId(req.app.get('db'), req.user.id, group.id).then(() => {
+          res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${group.id}`))
           .json(serializeGroup(group))
+        })
       })
       .catch(next)
   })
@@ -74,8 +87,8 @@ groupsRouter
   })
 
   .patch(jsonParser, (req, res, next) => {
-    const { name, access_code } = req.body
-    const groupToUpdate = { name, access_code }
+    const { name, code } = req.body
+    const groupToUpdate = { name, code }
 
     const numberOfValues = Object.values(groupToUpdate).filter(Boolean).length
     if (numberOfValues === 0) {

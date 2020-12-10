@@ -4,6 +4,23 @@ const UsersService = require('./users-service')
 const usersRouter = express.Router()
 const jsonParser = express.json()
 
+const serializeUser = user => ({
+  id: user.id,
+  first_name: user.first_name,
+  last_name: user.last_name,
+})
+
+usersRouter
+  .route('/')
+
+  .get((req, res, next) => {
+    UsersService.getUsersByGroupId(req.app.get('db'), req.query.group_id || 0)
+      .then(users => {
+        res.json(users.map(serializeUser))
+      })
+      .catch(next)
+  })
+
 usersRouter
   .route('/signup')
 
