@@ -1,5 +1,6 @@
 const express = require('express')
 const UsersService = require('./users-service')
+const GroupsService = require('../groups/groups-service')
 
 const usersRouter = express.Router()
 const jsonParser = express.json()
@@ -21,75 +22,72 @@ usersRouter
       .catch(next)
   })
 
-usersRouter
-  .route('/signup')
+  usersRouter
+  .route('/:user_id')
 
-  .post(jsonParser, (req, res, next) => {
-    const user = req.body
-
-    for (const key of ['first_name', 'last_name', 'email', 'password']) {
-      if (user[key] == null) {
-        return res.status(400).json({
-          error: { message: `Missing '${key}' in request body` }
-        })
-      }
-    }
-    UsersService.hashPassword(user.password)
-      .then((hashedPassword) => {
-        delete user.password
-        user.password = hashedPassword
-      })
-      .then(() => UsersService.createToken())
-      .then(token => user.token = token)
-      .then(() => UsersService.createUser(req.app.get('db'), user))
+  .get((req, res, next) => {
+    UsersService.getById(req.app.get('db'), req.params.user_id)
       .then(user => {
-        delete user.password
-        res.status(201).json(user)
+        if (!user) {
+          return res.status(404).json({
+            error: { message: `User doesn't exist` }
+          })
+        }
+        return res.json(serializeUser(user))
       })
-      .catch((err) => {
-        next()
-      })
+      .catch(next)
   })
-
-usersRouter
-  .route('/login')
-
-  .post(jsonParser, (req, res, next) => {
-    const userReq = req.body
-    let user;
-
-    for (const key of ['email', 'password']) {
-      if (userReq[key] == null) {
-        return res.status(400).json({
-          error: { message: `Missing '${key}' in request body` }
-        })
-      }
+  .patch(jsonParser, (req, res, next) => {
+    if (req.user.id === req.query.user_id) {
+      return res.status(400).json({
+        error: {
+          message: `Unauthorized request.`,
+        }
+      })
     }
 
-    UsersService.getByEmail(req.app.get('db'), userReq.email)
-      .then(foundUser => {
-        user = foundUser
-        if (!foundUser) {
-          throw new Error('User cannot be found.');
-        }
+    if (req.body.code) {
+      GroupsService.getByCode(
+        req.app.get('db'),
+        req.body.code
+      )
+        .then((group) => {
+          if(!group) {
+            return res.status(400).json({
+              error: {
+                message: `Invalid Group Code.`,
+              }
+            })
+          }
 
-        return UsersService.checkPassword(userReq.password, foundUser)
-      })
-      .then(res => {
-        return UsersService.createToken()
-      })
-      .then(token => {
-        UsersService.updateUserToken(req.app.get('db'), user.id, token)
-        return token;
-      })
-      .then((token) => {
-        const newUser = {...user, token: token};
-        delete newUser.password
-        res.status(200).json(newUser)
-      })
-      .catch((err) => {
-        next()
-      })
+          UsersService.updateUserGroupId(
+            req.app.get('db'),
+            req.user.id,
+            group.id
+          )
+            .then(() => {
+              UsersService.getById(req.app.get('db'), req.user.id).then(updatedUser => {
+                delete updatedUser.password
+                res.status(201).json(updatedUser)
+              })
+            })
+            .catch(next)
+        })
+        .catch(next)
+    } else {
+      UsersService.updateUserGroupId(
+        req.app.get('db'),
+        req.user.id,
+        req.body.group_id
+      )
+        .then(() => {
+          UsersService.getById(req.app.get('db'), req.user.id).then(updatedUser => {
+            delete updatedUser.password
+            res.status(201).json(updatedUser)
+          })
+        })
+        .catch(next)
+    }
   })
 
 module.exports = usersRouter

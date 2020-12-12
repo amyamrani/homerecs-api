@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
 const errorHandler = require('./errorHandler')
 const validateBearerToken = require('./validateBearerToken')
+const authRouter = require('./users/auth-router')
 const usersRouter = require('./users/users-router')
 const groupsRouter = require('./groups/groups-router')
 const productsRouter = require('./products/products-router')
@@ -24,10 +25,11 @@ app.use(
   })
 );
 
-app.use('/api/users', usersRouter)
+app.use('/api/users', authRouter)
 
 app.use(validateBearerToken)
 
+app.use('/api/users', usersRouter)
 app.use('/api/groups', groupsRouter)
 app.use('/api/products', productsRouter)
 

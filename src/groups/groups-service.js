@@ -14,6 +14,9 @@ const GroupsService = {
   getById(knex, id) {
     return knex.from('groups').select('*').where('id', id).first()
   },
+  getByCode(knex, code) {
+    return knex.from('groups').select('*').where('code', code).first()
+  },
   deleteGroup(knex, id) {
     return knex('groups')
       .where({ id })
