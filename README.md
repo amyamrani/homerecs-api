@@ -1,26 +1,306 @@
-# Express Boilerplate!
+# HomeRecs API
 
-This is a boilerplate project used for starting new projects!
+Server API interface for storing and delivering data to HomeRecs application
 
-## Set up
+## Introduction
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+Connect with friends and family to share the products you love so everyone can feel confident about the products they buy.
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+## Live App
+https://homerecs.vercel.app
 
-## Scripts
+## Client Repo
+https://github.com/amyamrani/homerecs
 
-Start the application `npm start`
+## API Endpoints
 
-Start nodemon for the application `npm run dev`
+### Sign Up: `POST /api/users/signup`
 
-Run the tests `npm test`
+Adds new user credentials to database and returns a JWT as long as the email is unique
 
-## Deploying
+**Sample Request Body**
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+```
+{
+  "first_name": "New",
+  "last_name": "User",
+  "email": "newuser@gmail.com",
+  "password': "Password123"
+}
+```
+
+**Sample Response Body**
+
+```
+{
+  "id": 16,
+  "group_id": null,
+  "first_name": "New",
+  "last_name": "User",
+  "email": "newuser@gmail.com",
+  "token": "tHiSisASaMpLEjWtAUthToKEN",
+  "date_created": "2020-12-19T15:43:10.889Z"
+}
+```
+
+### Login: `POST /api/users/login`
+
+Validates the login credentials against the database and returns a JWT
+
+**Sample Request Body**
+
+```
+{
+  "email": "newuser@gmail.com",
+  "password": "Password123"
+}
+```
+**Sample Response Body**
+
+```
+{
+  "id": 16,
+  "group_id": null,
+  "first_name": "New",
+  "last_name": "User",
+  "email": "newuser@gmail.com",
+  "token": "tHiSisASaMpLEjWtAUthToKEN",
+  "date_created": "2020-12-19T15:43:10.889Z"
+}
+```
+
+### Add a New Product: `POST /api/products`
+
+Creates a product for the logged in user
+
+**Sample Request Body**
+
+```
+{
+  "name": "TV",
+  "url": "https://www.bestbuy.com",
+  "comments":"Great sound and picture quality!",
+  "category":"Living Room"
+}
+```
+
+**Sample Response Body**
+
+```
+{
+  "id": 18,
+  "user_id": 16,
+  "name":"TV",
+  "url":"https://www.bestbuy.com",
+  "comments":"Great sound and picture quality!",
+  "category":"Living Room","date_created":"2020-12-19T15:57:01.353Z"
+}
+```
+
+### Get a User's Products: `GET /api/products`
+
+Retrieves the products for a given user
+
+**Sample Query String Parameters**
+
+```
+?user_id=16
+```
+
+**Sample Response Body**
+
+```
+[
+  {
+    "id": 18,
+    "user_id": 16,
+    "name": "TV",
+    "url": "https://www.bestbuy.com",
+    "comments": "Great sound and picture quality!",
+    "category": "Living Room",
+    "date_created": "2020-12-19T15:57:01.353Z"
+  },
+  {
+    "id": 19,
+    "user_id": 16,
+    "name": "Mirror",
+    "url": "https://www.target.com",
+    "comments": "Beautiful piece and matches any decor.",
+    "category": "Bedroom",
+    "date_created": "2020-12-19T16:17:04.163Z"
+  }
+]
+```
+
+### Update a Product: `PATCH /api/products/:id`
+
+Updates a user's product and returns a `204 No Content`
+
+**Sample Request Body**
+
+```
+{
+  "name": "Sony TV",
+  "url": "https://www.bestbuy.com",
+  "comments": "Great sound and picture quality!",
+  "category": "Living Room"
+}
+```
+
+### Delete a Product: `DELETE /api/products/:id`
+
+Deletes a product for a given user and returns a `204 No Content`
+
+### Add a New Group: `POST /api/groups`
+
+Creates a new group and returns an auto-generated invite code
+
+**Sample Request Body**
+
+```
+{"name": "Best Friends"}
+```
+
+**Sample Response Body**
+
+```
+{
+  "id": 38,
+  "name": "Best Friends",
+  "code": "K1KhdJu"
+}
+```
+
+### Get a Group: `GET /api/groups/:id`
+
+Retrieves a given group
+
+**Sample Response Body**
+
+```
+{
+  "id": 38,
+  "name": "Best Friends",
+  "code": "K1KhdJu"
+}
+```
+
+### Update a Group: `PATCH /api/groups/:id`
+
+Updates a group and returns a `204 No Content`
+
+**Sample Request Body**
+
+```
+{"name": "Best Friends!"}
+```
+
+### Leave a Group: `PATCH /api/users/:id`
+
+Updates the user's group_id to null
+
+**Sample Request Body**
+
+```
+{"group_id": null}
+```
+
+**Sample Response Body**
+
+```
+{
+  "id": 16,
+  "group_id": null,
+  "first_name": "New",
+  "last_name": "User",
+  "email": "newuser@gmail.com",
+  "token": "tHiSisASaMpLEjWtAUthToKEN",
+  "date_created": "2020-12-19T15:43:10.889Z"
+}
+```
+
+### Join a Group: `PATCH /api/users/:id`
+
+Updates the user's group_id
+
+**Sample Request Body**
+
+```
+{"code": "K1KhdJu"}
+```
+
+**Sample Response Body**
+
+```
+{
+  "id": 16,
+  "group_id": 38,
+  "first_name": "New",
+  "last_name": "User",
+  "email": "newuser@gmail.com",
+  "token": "tHiSisASaMpLEjWtAUthToKEN",
+  "date_created": "2020-12-19T15:43:10.889Z"
+}
+```
+
+### Get a User: `GET /api/users/:id`
+
+Retrieves a given user
+
+**Sample Response Body**
+
+```
+{
+  "id": 17,
+  "first_name": "Jane",
+  "last_name": "Smith"
+}
+```
+
+### Get Group Users: `GET /api/users`
+
+Retrieves the users in a given group
+
+**Sample Query String Parameters**
+
+```
+?group_id=38
+```
+
+**Sample Response Body**
+
+```
+[
+  {
+    "id": 16,
+    "first_name": "New",
+    "last_name": "User"
+  },
+  {
+    "id": 17,
+    "first_name": "Jane",
+    "last_name": "Smith"
+  },
+  {
+    "id": 18,
+    "first_name": "Greg",
+    "last_name": "Brown"
+  }
+]
+```
+
+## Technologies Used
+**Back End**
+- Node and Express
+  - JWT and bcrypt
+- Testing
+  - Mocha
+  - Chai and Supertest
+- Database
+  - PostgreSQL
+  - Knex.js
+
+**Production**
+- Deployed via Heroku
+
+
