@@ -46,6 +46,7 @@ usersRouter
       })
     }
 
+    // if a group access code is given then try to find the group and update the user
     if (req.body.code) {
       GroupsService.getByCode(
         req.app.get('db'),
@@ -74,7 +75,9 @@ usersRouter
             .catch(next)
         })
         .catch(next)
-    } else {
+    }
+    // otherwise we update the users group id
+    else {
       UsersService.updateUserGroupId(
         req.app.get('db'),
         req.user.id,

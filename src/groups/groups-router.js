@@ -12,6 +12,7 @@ const serializeGroup = group => ({
   code: group.code,
 })
 
+// generate an invite code when a new group is added
 const generateCode = (length) => {
   let result = ''
   let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -68,8 +69,8 @@ groupsRouter
             error: { message: `Group doesn't exist` }
           })
         }
-        res.group = group // save the group for the next middleware
-        next() // call next so the next middleware happens
+        res.group = group
+        next()
       })
       .catch(next)
   })
